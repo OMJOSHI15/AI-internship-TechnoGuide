@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Resume Builder</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6ff;
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #4f46e5;
+      margin-bottom: 24px;
+      font-size: 28px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+    textarea { height: 80px; resize: vertical; }
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 14px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover { background: #4338ca; }
+    #output {
+      margin-top: 30px;
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 24px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.7;
+      display: none;
+    }
+    #loading {
+      text-align: center;
+      color: #4f46e5;
+      margin-top: 20px;
+      display: none;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🤖 AI Resume Builder</h1>
+
+<div class="container">
+  <label>Full Name</label>
+  <input id="name" type="text" placeholder="e.g. John Doe" />
+
+  <label>Job Role Applying For</label>
+  <input id="role" type="text" placeholder="e.g. AI Engineer Intern" />
+
+  <label>Skills (comma separated)</label>
+  <input id="skills" type="text" placeholder="e.g. Python, Machine Learning, OpenCV" />
+
+  <label>Education</label>
+  <input id="education" type="text" placeholder="e.g. B.Tech CSE " />
+
+  <label>Experience / Projects</label>
+  <textarea id="experience" placeholder="e.g. Built a face detection app using OpenCV. Created AI chatbot using Claude API."></textarea>
+
+  <label>Achievements (optional)</label>
+  <textarea id="achievements" placeholder="e.g. Won college hackathon, Published ML research paper"></textarea>
+
+  <button onclick="generateResume()">✨ Generate Resume</button>
+</div>
+
+<div id="loading">⏳ Generating your resume...</div>
+<div id="output"></div>
+
+<script>
+  const API_KEY = "API_KEY_HERE"; // Replace this
+
+  async function generateResume() {
+    const name = document.getElementById("name").value.trim();
+    const role = document.getElementById("role").value.trim();
+    const skills = document.getElementById("skills").value.trim();
+    const education = document.getElementById("education").value.trim();
+    const experience = document.getElementById("experience").value.trim();
+    const achievements = document.getElementById("achievements").value.trim();
+
+    if (!name || !role || !skills || !education) {
+      alert("Please fill in Name, Role, Skills, and Education at minimum.");
+      return;
+    }
+
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("output").style.display = "none";
+
+    const prompt = `Create a professional resume for the following person:
+
+Name: ${name}
+Role Applying For: ${role}
+Skills: ${skills}
+Education: ${education}
+Experience/Projects: ${experience}
+Achievements: ${achievements}
+
+Format it clearly with sections: Summary, Skills, Education, Experience/Projects, and Achievements. Make it professional and concise.`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": API_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 1024,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      const resume = data.content[0].text;
+
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("output").style.display = "block";
+      document.getElementById("output").innerText = resume;
+
+    } catch (error) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("output").style.display = "block";
+      document.getElementById("output").innerText = "Error: Could not generate resume. Check your API key.";
+    }
+  }
+</script>
+
+</body>
+</html>

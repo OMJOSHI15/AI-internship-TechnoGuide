@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Sales Analyzer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; min-height: 100vh; }
+    header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 30px 40px; border-bottom: 1px solid #2a2a2a; }
+    header h1 { font-size: 28px; color: #a78bfa; }
+    header p { color: #888; font-size: 14px; margin-top: 4px; }
+    .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+    .upload-box { border: 2px dashed #4f46e5; border-radius: 16px; padding: 50px; text-align: center; background: #1a1a1a; cursor: pointer; transition: border-color 0.3s; margin-bottom: 30px; }
+    .upload-box:hover { border-color: #a78bfa; background: #1e1e2e; }
+    .upload-box h2 { font-size: 20px; color: #a78bfa; margin-bottom: 8px; }
+    .upload-box p { color: #888; font-size: 14px; margin-bottom: 20px; }
+    .upload-box input { display: none; }
+    .btn { padding: 12px 28px; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: bold; border: none; }
+    .btn-primary { background: #4f46e5; color: white; }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-outline { background: transparent; border: 2px solid #4f46e5; color: #a78bfa; }
+    #table-section { display: none; margin-bottom: 30px; }
+    #table-section h3 { font-size: 18px; color: #a78bfa; margin-bottom: 14px; }
+    .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid #2a2a2a; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead { background: #1e1e3e; }
+    th { padding: 12px 16px; text-align: left; color: #a78bfa; font-weight: 600; border-bottom: 1px solid #2a2a2a; }
+    td { padding: 10px 16px; border-bottom: 1px solid #1e1e1e; color: #ccc; }
+    tr:hover td { background: #1a1a2e; }
+    #analyze-section { display: none; text-align: center; margin-bottom: 30px; }
+    #results-section { display: none; }
+    #results-section h3 { font-size: 20px; color: #a78bfa; margin-bottom: 20px; }
+    .result-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 14px; padding: 28px; white-space: pre-wrap; font-size: 15px; line-height: 1.8; color: #e0d7ff; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; text-align: center; }
+    .stat-card .value { font-size: 26px; font-weight: bold; color: #a78bfa; }
+    .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
+    #loading { display: none; text-align: center; padding: 30px; color: #a78bfa; font-size: 16px; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #2a2a2a; border-top: 3px solid #a78bfa; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .copy-btn { float: right; font-size: 13px; padding: 6px 14px; margin-top: -4px; }
+    footer { text-align: center; padding: 40px; color: #444; font-size: 13px; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>AI Sales Analyzer</h1>
+  <p>Upload your sales CSV and get instant AI-powered insights</p>
+</header>
+<div class="container">
+  <div class="upload-box" onclick="document.getElementById('csv-input').click()">
+    <h2>Upload Sales Data</h2>
+    <p>Click to select a CSV file with your sales data</p>
+    <input type="file" id="csv-input" accept=".csv" onchange="handleFile(event)" />
+    <button class="btn btn-primary" onclick="event.stopPropagation(); document.getElementById('csv-input').click()">Choose CSV File</button>
+    <p style="margin-top:14px; font-size:12px; color:#555;">Supports any CSV with columns like: Product, Sales, Revenue, Date, etc.</p>
+  </div>
+  <div style="text-align:center; margin-bottom:30px;">
+    <span style="color:#555; font-size:13px;">No CSV? </span>
+    <button class="btn btn-outline" style="font-size:13px; padding:6px 14px;" onclick="loadSampleData()">Load Sample Data</button>
+  </div>
+  <div id="table-section">
+    <h3>Data Preview <span id="row-count" style="font-size:13px; color:#555; font-weight:normal;"></span></h3>
+    <div class="table-wrapper">
+      <table id="data-table">
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="analyze-section">
+    <button class="btn btn-primary" style="font-size:16px; padding:14px 40px;" onclick="analyzeData()">Analyze with AI</button>
+  </div>
+  <div id="loading"><div class="spinner"></div>Analyzing your sales data with AI...</div>
+  <div id="results-section">
+    <h3>AI Analysis Results <button class="btn btn-outline copy-btn" onclick="copyResults()">Copy</button></h3>
+    <div id="stats-grid" class="stats-grid"></div>
+    <div class="result-box" id="ai-result"></div>
+  </div>
+</div>
+<footer>AI Sales Analyzer - Built for 21-Day AI Internship - Joshi Om</footer>
+<script>
+const API_KEY = "";
+let parsedData = [], headers = [];
+function loadSampleData() {
+  const csv = "Product,Category,Units Sold,Revenue,Month\nLaptop Pro,Electronics,120,144000,January\nWireless Headphones,Electronics,340,27200,January\nOffice Chair,Furniture,85,21250,January\nLaptop Pro,Electronics,145,174000,February\nWireless Headphones,Electronics,290,23200,February\nOffice Chair,Furniture,95,23750,February\nLaptop Pro,Electronics,200,240000,March\nWireless Headphones,Electronics,410,32800,March\nOffice Chair,Furniture,110,27500,March";
+  processCSV(csv);
+}
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => processCSV(e.target.result);
+  reader.readAsText(file);
+}
+function processCSV(csvText) {
+  const result = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+  parsedData = result.data; headers = result.meta.fields; renderTable();
+}
+function renderTable() {
+  document.getElementById('table-head').innerHTML = '<tr>' + headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+  const preview = parsedData.slice(0, 10);
+  document.getElementById('table-body').innerHTML = preview.map(row => '<tr>' + headers.map(h => '<td>' + (row[h] || '') + '</td>').join('') + '</tr>').join('');
+  document.getElementById('row-count').textContent = '(' + parsedData.length + ' rows)';
+  document.getElementById('table-section').style.display = 'block';
+  document.getElementById('analyze-section').style.display = 'block';
+  document.getElementById('results-section').style.display = 'none';
+}
+function computeStats() {
+  const stats = [{ label: 'Total Rows', value: parsedData.length }];
+  headers.forEach(h => {
+    const nums = parsedData.map(r => parseFloat(r[h])).filter(n => !isNaN(n));
+    if (nums.length === parsedData.length) {
+      const total = nums.reduce((a, b) => a + b, 0);
+      const label = h.toLowerCase();
+      if (label.includes('revenue') || label.includes('sales') || label.includes('amount')) {
+        stats.push({ label: 'Total ' + h, value: total.toLocaleString() });
+        stats.push({ label: 'Avg ' + h, value: Math.round(total / nums.length).toLocaleString() });
+      } else if (label.includes('unit') || label.includes('qty')) {
+        stats.push({ label: 'Total ' + h, value: total.toLocaleString() });
+      }
+    }
+  });
+  return stats.slice(0, 4);
+}
+async function analyzeData() {
+  if (!API_KEY) { alert('Please add your Claude API key in the code'); return; }
+  document.getElementById('analyze-section').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  const preview = parsedData.slice(0, 50);
+  const csvSummary = [headers.join(','), ...preview.map(r => headers.map(h => r[h]).join(','))].join('\n');
+  const prompt = 'You are a business analyst. Analyze this sales data:\n' + csvSummary + '\n\nProvide: 1. EXECUTIVE SUMMARY 2. TOP PERFORMING PRODUCTS 3. REVENUE TRENDS 4. KEY INSIGHTS 5. RECOMMENDATIONS';
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 1500, messages: [{ role: "user", content: prompt }] })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    const stats = computeStats();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('results-section').style.display = 'block';
+    document.getElementById('stats-grid').innerHTML = stats.map(s => '<div class="stat-card"><div class="value">' + s.value + '</div><div class="label">' + s.label + '</div></div>').join('');
+    document.getElementById('ai-result').textContent = data.content[0].text;
+  } catch (error) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('analyze-section').style.display = 'block';
+    document.getElementById('ai-result').textContent = 'Error: ' + error.message;
+    document.getElementById('results-section').style.display = 'block';
+  }
+}
+function copyResults() {
+  navigator.clipboard.writeText(document.getElementById('ai-result').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn'); btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+</body>
+</html>

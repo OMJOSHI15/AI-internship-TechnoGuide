@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Joshi Om | AI Developer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 60px; background: #111; position: sticky; top: 0; z-index: 100; }
+    nav .logo { font-size: 22px; font-weight: bold; color: #7c3aed; }
+    nav a { color: #ccc; text-decoration: none; margin-left: 24px; font-size: 15px; }
+    nav a:hover { color: #7c3aed; }
+    .hero { text-align: center; padding: 100px 20px 60px; background: linear-gradient(135deg, #1a1a2e, #16213e); }
+    .hero h1 { font-size: 48px; margin-bottom: 16px; }
+    .hero h1 span { color: #7c3aed; }
+    .hero p { font-size: 18px; color: #aaa; max-width: 600px; margin: 0 auto 30px; }
+    .hero .btns { display: flex; gap: 16px; justify-content: center; }
+    .btn { padding: 12px 28px; border-radius: 8px; font-size: 15px; cursor: pointer; text-decoration: none; font-weight: bold; }
+    .btn-primary { background: #7c3aed; color: white; border: none; }
+    .btn-outline { border: 2px solid #7c3aed; color: #7c3aed; background: transparent; }
+    section { padding: 70px 60px; max-width: 1100px; margin: 0 auto; }
+    h2 { font-size: 32px; margin-bottom: 40px; }
+    h2 span { color: #7c3aed; }
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .skill-tag { background: #1e1e1e; border: 1px solid #7c3aed; color: #c4b5fd; padding: 8px 18px; border-radius: 20px; font-size: 14px; }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .project-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px; transition: border-color 0.3s; }
+    .project-card:hover { border-color: #7c3aed; }
+    .project-card h3 { font-size: 18px; margin-bottom: 10px; color: #e0d7ff; }
+    .project-card p { color: #888; font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+    .project-card a { color: #7c3aed; font-size: 14px; text-decoration: none; font-weight: bold; }
+    .contact-box { background: #1a1a1a; border-radius: 16px; padding: 50px; text-align: center; border: 1px solid #2a2a2a; }
+    .contact-box p { color: #aaa; margin: 12px 0 28px; font-size: 16px; }
+    .contact-links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    footer { text-align: center; padding: 30px; color: #555; font-size: 13px; }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="logo">Joshi Om</div>
+  <div><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#contact">Contact</a></div>
+</nav>
+<div class="hero">
+  <h1>Hi, I am <span>Joshi Om</span></h1>
+  <p>AI Developer and Engineering Student building intelligent tools with Python, Machine Learning, and Computer Vision.</p>
+  <div class="btns">
+    <a href="https://github.com/OMJOSHI15" target="_blank" class="btn btn-primary">GitHub</a>
+    <a href="#projects" class="btn btn-outline">View Projects</a>
+  </div>
+</div>
+<section id="skills">
+  <h2>My <span>Skills</span></h2>
+  <div class="skills-grid">
+    <span class="skill-tag">Python</span><span class="skill-tag">Machine Learning</span><span class="skill-tag">Computer Vision</span><span class="skill-tag">NLP</span><span class="skill-tag">OpenCV</span><span class="skill-tag">Scikit-learn</span><span class="skill-tag">Pandas</span><span class="skill-tag">Streamlit</span><span class="skill-tag">Claude API</span><span class="skill-tag">HTML/CSS/JS</span><span class="skill-tag">Git and GitHub</span><span class="skill-tag">Make.com Automation</span>
+  </div>
+</section>
+<section id="projects">
+  <h2>My <span>Projects</span></h2>
+  <div class="projects-grid">
+    <div class="project-card"><h3>House Price Predictor</h3><p>ML model trained with Scikit-learn to predict house prices. Deployed as a web app using Streamlit.</p><a href="https://github.com/OMJOSHI15/AI-internship-TechnoGuide/tree/main/Day7" target="_blank">View on GitHub</a></div>
+    <div class="project-card"><h3>AI Support Chatbot</h3><p>Web-based chatbot powered by Claude API. Answers user queries in real-time with a clean UI.</p><a href="https://github.com/OMJOSHI15/AI-internship-TechnoGuide/tree/main/Day15" target="_blank">View on GitHub</a></div>
+    <div class="project-card"><h3>Face Detection App</h3><p>Real-time face detection using OpenCV and Haar Cascades. Captures live webcam feed.</p><a href="https://github.com/OMJOSHI15/AI-internship-TechnoGuide/tree/main/Day11" target="_blank">View on GitHub</a></div>
+    <div class="project-card"><h3>Spam Detector</h3><p>NLP-based text classifier that detects spam messages using machine learning.</p><a href="https://github.com/OMJOSHI15/AI-internship-TechnoGuide/tree/main/Day12" target="_blank">View on GitHub</a></div>
+    <div class="project-card"><h3>AI Resume Builder</h3><p>Generates professional resumes automatically using Claude AI based on user input.</p><a href="https://github.com/OMJOSHI15/AI-internship-TechnoGuide/tree/main/Day16" target="_blank">View on GitHub</a></div>
+    <div class="project-card"><h3>Voice AI Assistant</h3><p>Speech recognition-based voice assistant that executes commands using Python.</p><a href="https://github.com/OMJOSHI15/AI-internship-TechnoGuide/tree/main/Day13" target="_blank">View on GitHub</a></div>
+  </div>
+</section>
+<section id="contact">
+  <div class="contact-box">
+    <h2>Get In <span>Touch</span></h2>
+    <p>Open to internship opportunities, collaborations, and AI projects.</p>
+    <div class="contact-links">
+      <a href="https://github.com/OMJOSHI15" target="_blank" class="btn btn-primary">GitHub</a>
+      <a href="mailto:rudranpatel@algomau.ca" class="btn btn-outline">Email Me</a>
+    </div>
+  </div>
+</section>
+<footer>Built by Joshi Om 2026</footer>
+</body>
+</html>
